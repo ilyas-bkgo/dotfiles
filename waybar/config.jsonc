@@ -1,0 +1,93 @@
+{
+  "layer": "top",
+  "position": "top",
+  "anchor": "top center",
+  "margin-top": 2,
+  "margin-left": 8,
+  "margin-right": 8,
+  "height": 42,
+  "fixed-width": false,
+  "fixed-center": true,
+
+  "modules-left": [
+  ],
+  "modules-center": [
+    "clock",
+    "custom/media",
+    "hyprland/workspaces",
+    "pulseaudio",
+    "network",
+    "battery"
+  ],
+  "modules-right": [
+  ],
+
+  "clock": {
+    "format": "{:%H:%M}",
+    "format-alt": "  {:%A, %B %d}",
+    "tooltip": false
+  },
+
+  "custom/media": {
+    "format": "{}",
+    "max-length": 26,
+    "exec": "sh -c 'status=$(playerctl status 2>/dev/null); artist=$(playerctl metadata artist 2>/dev/null); title=$(playerctl metadata title 2>/dev/null); icon=\"\"; [ \"$status\" = \"Paused\" ] && icon=\"\"; if [ -n \"$artist\" ] && [ -n \"$title\" ]; then printf \"%s  %s - %s\\n\" \"$icon\" \"$artist\" \"$title\"; else printf \"%s  %s%s\\n\" \"$icon\" \"$artist\" \"$title\"; fi'",
+    "exec-if": "playerctl status 2>/dev/null | grep -Eq 'Playing|Paused'",
+    "interval": 2,
+    "escape": true,
+    "tooltip": true,
+    "tooltip-format": "Now playing"
+  },
+
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "on-click": "activate",
+    "sort-by-number": true,
+    "persistent-only": true,
+    "ignore-workspaces": ["5", "6", "7", "8", "9", "10"],
+    "persistent-workspaces": {
+      "*": [1, 2, 3, 4]
+    },
+    "format-icons": {
+      "1": "󰈹",
+      "2": "󰨞",
+      "3": "󰆍",
+      "4": "󰭹"
+    }
+  },
+
+  "pulseaudio": {
+    "format": "",
+    "format-muted": "",
+    "scroll-step": 5,
+    "on-click": "pavucontrol",
+    "tooltip": true,
+    "tooltip-format": "Volume: {volume}%"
+  },
+
+  "network": {
+    "format-wifi": "",
+    "format-ethernet": "󰈀",
+    "format-disconnected": "󰖪",
+    "on-click": "nm-connection-editor",
+    "tooltip": true,
+    "tooltip-format": "Interface: {ifname}\nIP: {ipaddr}\nSignal: {signaldBm}dBm"
+  },
+
+  "battery": {
+    "states": {
+      "warning": 20,
+      "critical": 10
+    },
+    "format": "{icon}",
+    "format-charging": " {capacity}%",
+    "format-plugged": " {capacity}%",
+    "format-icons": {
+      "default": ["", "", "", "", ""],
+      "charging": ["", "", "", "", ""]
+    },
+    "on-click": "gnome-power-statistics",
+    "tooltip": true,
+    "tooltip-format": "{timeTo}\nHealth: {health}%"
+  }
+}

@@ -1,18 +1,24 @@
 # Ignore everything by default
 *
 
-# Keep repo metadata and helper files
 !.gitignore
 !README.md
 !link.sh
 
-# Keep selected config directories and files
 !hypr/
 !hypr/hyprland.conf
 !hypr/scripts/
 !hypr/scripts/theme-switcher
+
 !wofi/
 !wofi/style.css
 !wofi/themes/
 !wofi/themes/dark.css
 !wofi/themes/light.css
+
+!waybar/
+!waybar/config.jsonc
+!waybar/style.css
+!waybar/themes/
+!waybar/themes/dark.css
+!waybar/themes/light.css
