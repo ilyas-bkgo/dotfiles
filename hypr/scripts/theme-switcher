@@ -1,0 +1,141 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+state_file="$config_home/hypr/themes/current"
+
+usage() {
+    printf 'Usage: %s [dark|light|toggle|apply]\n' "${0##*/}"
+}
+
+current_theme() {
+    if [[ -f "$state_file" ]]; then
+        tr -d '[:space:]' < "$state_file"
+    else
+        printf 'dark'
+    fi
+}
+
+set_key_value() {
+    local file="$1"
+    local key="$2"
+    local value="$3"
+
+    mkdir -p "$(dirname "$file")"
+
+    if [[ -f "$file" ]] && grep -q "^${key}=" "$file"; then
+        sed -i "s|^${key}=.*|${key}=${value}|" "$file"
+    else
+        printf '%s=%s\n' "$key" "$value" >> "$file"
+    fi
+}
+
+restart_waybar() {
+    if pgrep -x waybar >/dev/null 2>&1; then
+        killall waybar >/dev/null 2>&1 || true
+        setsid waybar >/dev/null 2>&1 &
+    fi
+}
+
+reload_hyprland() {
+    if command -v hyprctl >/dev/null 2>&1; then
+        hyprctl reload >/dev/null 2>&1 || "$config_home/hypr/scripts/hypr-reload" >/dev/null 2>&1 || true
+    fi
+}
+
+apply_theme() {
+    local theme="$1"
+    local gtk_theme color_scheme prefer_dark qt_scheme
+
+    case "$theme" in
+        dark)
+            gtk_theme="Breeze-Dark"
+            color_scheme="prefer-dark"
+            prefer_dark="1"
+            qt_scheme="/usr/share/color-schemes/BreezeDark.colors"
+            ;;
+        light)
+            gtk_theme="Breeze"
+            color_scheme="prefer-light"
+            prefer_dark="0"
+            qt_scheme="/usr/share/color-schemes/BreezeLight.colors"
+            ;;
+        *)
+            usage >&2
+            exit 1
+            ;;
+    esac
+
+    cp "$config_home/hypr/themes/$theme.conf" "$config_home/hypr/themes/current.conf"
+    cp "$config_home/waybar/themes/$theme.css" "$config_home/waybar/themes/current.css"
+    cp "$config_home/wofi/themes/$theme.css" "$config_home/wofi/themes/current.css"
+    printf '%s\n' "$theme" > "$state_file"
+
+    set_key_value "$config_home/environment.d/99-theme.conf" "XDG_CURRENT_DESKTOP" "Hyprland"
+    set_key_value "$config_home/environment.d/99-theme.conf" "XDG_SESSION_DESKTOP" "Hyprland"
+    set_key_value "$config_home/environment.d/99-theme.conf" "GTK_THEME" "$gtk_theme"
+    set_key_value "$config_home/environment.d/99-theme.conf" "GTK_APPLICATION_PREFER_DARK_THEME" "$prefer_dark"
+
+    set_key_value "$config_home/gtk-3.0/settings.ini" "gtk-theme-name" "$gtk_theme"
+    set_key_value "$config_home/gtk-3.0/settings.ini" "gtk-application-prefer-dark-theme" "$prefer_dark"
+    set_key_value "$config_home/gtk-4.0/settings.ini" "gtk-theme-name" "$gtk_theme"
+    set_key_value "$config_home/gtk-4.0/settings.ini" "gtk-application-prefer-dark-theme" "$prefer_dark"
+    set_key_value "$config_home/qt6ct/qt6ct.conf" "color_scheme_path" "$qt_scheme"
+
+    if command -v gsettings >/dev/null 2>&1; then
+        gsettings set org.gnome.desktop.interface color-scheme "$color_scheme" >/dev/null 2>&1 || true
+        gsettings set org.gnome.desktop.interface gtk-theme "$gtk_theme" >/dev/null 2>&1 || true
+    fi
+
+    if command -v notify-send >/dev/null 2>&1; then
+        notify-send "Theme switched" "${theme^} theme is active" >/dev/null 2>&1 || true
+    fi
+
+    reload_hyprland
+    restart_waybar
+}
+
+pick_theme() {
+    local selected
+
+    selected="$(
+        printf 'dark\nlight\ntoggle\n' \
+            | wofi --dmenu --prompt 'Theme' --style "$config_home/wofi/style.css" --width 360 --height 180 2>/dev/null
+    )"
+
+    [[ -n "$selected" ]] && printf '%s' "$selected"
+}
+
+command="${1:-menu}"
+
+case "$command" in
+    menu)
+        theme="$(pick_theme)"
+        [[ -n "${theme:-}" ]] || exit 0
+        ;;
+    apply)
+        theme="$(current_theme)"
+        ;;
+    toggle)
+        case "$(current_theme)" in
+            dark) theme="light" ;;
+            *) theme="dark" ;;
+        esac
+        ;;
+    dark|light)
+        theme="$command"
+        ;;
+    *)
+        usage >&2
+        exit 1
+        ;;
+esac
+
+if [[ "$theme" == "toggle" ]]; then
+    case "$(current_theme)" in
+        dark) theme="light" ;;
+        *) theme="dark" ;;
+    esac
+fi
+
+apply_theme "$theme"

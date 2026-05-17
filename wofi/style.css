@@ -1,0 +1,67 @@
+@import "themes/current.css";
+
+window {
+  margin: 0px;
+  border: 2px solid @border;
+  background-color: @bg;
+  border-radius: 15px;
+  font-family: "JetBrains Mono", "Font Awesome 6 Free", sans-serif;
+  font-size: 14px;
+}
+
+#input {
+  margin: 15px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 10px;
+  background-color: @input-bg;
+  color: @input-text;
+}
+
+#input:focus {
+  border: 1px solid @focus;
+  outline: none;
+}
+
+#inner-box {
+  margin: 5px;
+  border: none;
+  background-color: @bg;
+  border-radius: 15px;
+}
+
+#outer-box {
+  margin: 5px;
+  border: none;
+  background-color: @bg;
+  border-radius: 15px;
+}
+
+#scroll {
+  margin: 0px;
+  border: none;
+}
+
+#text {
+  margin: 5px;
+  border: none;
+  color: @text;
+}
+
+#entry {
+  padding: 5px 10px;
+  margin: 0px 10px 5px 10px;
+  border-radius: 8px;
+  background-color: transparent;
+}
+
+#entry:selected {
+  background-color: @selected-bg;
+  border: 1px solid @selected-border;
+  outline: none;
+}
+
+#text:selected {
+  color: @focus;
+  font-weight: bold;
+}
