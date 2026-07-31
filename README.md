@@ -1,23 +1,22 @@
-# Dotfiles repo for Hyprland / Wofi
+# Dotfiles Repository
 
-This repository contains a minimal set of configuration files for Hyprland and Wofi.
+A customized, clean setup featuring **Hyprland**, **Waybar**, **Waypaper**, and **Wofi**.
 
-## Included files
+![Desktop Screenshot](./screenshot.png)
 
-- `hypr/hyprland.conf`
-- `hypr/scripts/theme-switcher`
-- `wofi/style.css`
-- `wofi/themes/dark.css`
-- `wofi/themes/current.css`
-- `wofi/themes/light.css`
+## Included Configurations
+
+### Active Setup (`current-config/`)
+- **Hyprland** (`hypr/`) - Window manager rules, keybinds, and autostart scripts
+- **Waybar** (`waybar/`) - Custom status bar configuration and styling
+- **Waypaper** (`waypaper/`) - Wallpaper manager settings
+
+### Legacy / Utility Setup
+- **Hyprland** (`hypr/hyprland.conf`, `hypr/scripts/theme-switcher`)
+- **Wofi** (`wofi/style.css`, `wofi/themes/`)
 
 ## Usage
 
-1. Clone or copy this repo to `~/dotfiles`.
-2. Run `./link.sh` from the repo root.
-3. Verify the symlinks in `~/.config/hypr` and `~/.config/wofi`.
-
-## Safety notes
-
-- Keep this repo private if it contains any personal paths or credentials.
-- Do not add sensitive files from `~/.config` unless you want them tracked publicly.
+1. Clone this repository to your home directory:
+   ```bash
+   git clone [https://github.com/ilyas-bkgo/dotfiles.git](https://github.com/ilyas-bkgo/dotfiles.git) ~/dotfiles
