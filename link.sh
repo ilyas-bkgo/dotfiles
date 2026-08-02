@@ -2,19 +2,59 @@
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+src_dir="$repo_dir/current-config"
 config_dir="$HOME/.config"
+backup_dir="$HOME/.config-backup-$(date +%Y%m%d-%H%M%S)"
 
-mkdir -p "$config_dir/hypr/scripts"
-mkdir -p "$config_dir/wofi/themes"
+link_file() {
+  local src="$1"
+  local dest="$2"
 
-ln -sf "$repo_dir/hypr/hyprland.conf" "$config_dir/hypr/hyprland.conf"
-ln -sf "$repo_dir/hypr/scripts/theme-switcher" "$config_dir/hypr/scripts/theme-switcher"
-ln -sf "$repo_dir/wofi/style.css" "$config_dir/wofi/style.css"
-ln -sf "$repo_dir/wofi/themes/dark.css" "$config_dir/wofi/themes/dark.css"
-ln -sf "$repo_dir/wofi/themes/current.css" "$config_dir/wofi/themes/current.css"
-ln -sf "$repo_dir/wofi/themes/light.css" "$config_dir/wofi/themes/light.css"
+  mkdir -p "$(dirname "$dest")"
 
-chmod +x "$config_dir/hypr/scripts/theme-switcher"
-chmod +x "$repo_dir/link.sh"
+  if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+    mkdir -p "$(dirname "$backup_dir/${dest#$HOME/}")"
+    mv "$dest" "$backup_dir/${dest#$HOME/}"
+    printf 'Backed up existing %s\n' "$dest"
+  fi
 
-printf 'Symlinked dotfiles from %s to %s\n' "$repo_dir" "$config_dir"
+  ln -sf "$src" "$dest"
+  printf 'Linked %s -> %s\n' "$dest" "$src"
+}
+
+link_dir() {
+  local src="$1"
+  local dest="$2"
+
+  if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+    mkdir -p "$(dirname "$backup_dir/${dest#$HOME/}")"
+    mv "$dest" "$backup_dir/${dest#$HOME/}"
+    printf 'Backed up existing %s\n' "$dest"
+  fi
+
+  mkdir -p "$(dirname "$dest")"
+  ln -sfn "$src" "$dest"
+  printf 'Linked %s -> %s\n' "$dest" "$src"
+}
+
+# hypr
+link_file "$src_dir/hypr/hyprland.lua"   "$config_dir/hypr/hyprland.lua"
+link_file "$src_dir/hypr/hyprlock.conf"  "$config_dir/hypr/hyprlock.conf"
+link_file "$src_dir/hypr/hypridle.conf"  "$config_dir/hypr/hypridle.conf"
+link_file "$src_dir/hypr/hyprpaper.conf" "$config_dir/hypr/hyprpaper.conf"
+link_dir  "$src_dir/hypr/scripts"        "$config_dir/hypr/scripts"
+
+find "$config_dir/hypr/scripts" -type f -name '*.sh' -exec chmod +x {} \;
+
+# waybar
+link_file "$src_dir/waybar/config.jsonc"         "$config_dir/waybar/config.jsonc"
+link_file "$src_dir/waybar/style.css"            "$config_dir/waybar/style.css"
+link_file "$src_dir/waybar/V3border2.png"        "$config_dir/waybar/V3border2.png"
+link_file "$src_dir/waybar/scripts/wifi-menu.sh" "$config_dir/waybar/scripts/wifi-menu.sh"
+chmod +x "$config_dir/waybar/scripts/wifi-menu.sh"
+
+if [ -d "$backup_dir" ]; then
+  printf '\nExisting configs backed up to: %s\n' "$backup_dir"
+fi
+
+printf '\nDone. Symlinked current-config from %s to %s\n' "$src_dir" "$config_dir"

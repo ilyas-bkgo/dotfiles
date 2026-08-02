@@ -48,19 +48,30 @@ local menu = "wofi --show drun"
 -- Autostart necessary processes (like notifications daemons, status bars, etc.)
 -- Or execute your favorite apps at launch like this:
 --
--- NOTE: dropped hyprpaper in favor of swww-daemon, since waypaper is
--- configured to talk to one wallpaper backend at a time. Running both
--- daemons simultaneously wastes resources and can cause startup flicker.
+-- Use hyprpaper as the wallpaper backend and leave the old waypaper/swww
+-- startup in place as comments so it can be restored if needed.
+
+local function start_in_background(command)
+    os.execute("nohup " .. command .. " >/dev/null 2>&1 &")
+end
+
 hl.on("hyprland.start", function ()
-    hl.exec_once("systemctl --user start waybar.service")
-    hl.exec_once("hypridle")
-    hl.exec_once("nm-applet")
-    hl.exec_once("mako")
-    hl.exec_once("swww-daemon")
-    hl.exec_once("waypaper --restore")
+    start_in_background("notify-send 'Hyprland' 'Startup hook executed'")
+
+    -- start_in_background("hyprpaper")
+    start_in_background("swww-daemon")
+    start_in_background("nm-applet")
+    start_in_background("mako")
+
+    start_in_background("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=Hyprland")
+    start_in_background("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+    start_in_background("/usr/libexec/xdg-desktop-portal-hyprland")
+    start_in_background("sh -c 'sleep 1 && /usr/libexec/xdg-desktop-portal'")
+
+    start_in_background("waybar")
+    -- start_in_background("swww-daemon")
+    -- start_in_background("sh -c 'sleep 1 && waypaper --restore'")
 end)
-
-
 -------------------------------
 ---- ENVIRONMENT VARIABLES ----
 -------------------------------
@@ -74,26 +85,9 @@ hl.env("GTK_APPLICATION_PREFER_DARK_THEME", "1")
 
 -- Qt (Qt6 applications like Dolphin)
 hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
-hl.env("QT_STYLE_OVERRIDE", "kvantum")
-hl.env("COLORSCHEME", "prefer-dark")
+hl.env("QT_STYLE_OVERRIDE", "qt6ct-style")
 
------------------------
------ PERMISSIONS -----
------------------------
 
--- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Permissions/
--- Please note permission changes here require a Hyprland restart and are not applied on-the-fly
--- for security reasons
-
--- hl.config({
---   ecosystem = {
---     enforce_permissions = true,
---   },
--- })
-
--- hl.permission("/usr/(bin|local/bin)/grim", "screencopy", "allow")
--- hl.permission("/usr/(lib|libexec|lib64)/xdg-desktop-portal-hyprland", "screencopy", "allow")
--- hl.permission("/usr/(bin|local/bin)/hyprpm", "plugin", "allow")
 
 
 -----------------------
@@ -108,7 +102,7 @@ hl.config({
 
         border_size = 3,
 
-        ["col.active_border"]   = "rgba(89b4faee)", -- Catppuccin Blue
+        ["col.active_border"]   = "rgba(cba6f7ee)", -- Catppuccin Mauve
         ["col.inactive_border"] = "rgba(313244aa)", -- Catppuccin Surface0
 
         -- Set to true to enable resizing windows by clicking and dragging on borders and gaps
@@ -171,28 +165,11 @@ hl.animation({ leaf = "layersIn",      enabled = true,  speed = 4,    bezier = "
 hl.animation({ leaf = "layersOut",     enabled = true,  speed = 1.5,  bezier = "linear",       style = "fade" })
 hl.animation({ leaf = "fadeLayersIn",  enabled = true,  speed = 1.79, bezier = "almostLinear" })
 hl.animation({ leaf = "fadeLayersOut", enabled = true,  speed = 1.39, bezier = "almostLinear" })
-hl.animation({ leaf = "workspaces",    enabled = true, speed = 5, bezier = "easeOutQuint", style = "slidevert" })
-hl.animation({ leaf = "workspacesIn",  enabled = true, speed = 5, bezier = "easeOutQuint", style = "slidevert" })
-hl.animation({ leaf = "workspacesOut", enabled = true, speed = 5, bezier = "easeOutQuint", style = "slidevert" })
+hl.animation({ leaf = "workspaces",    enabled = true, speed = 5, bezier = "easeOutQuint", style = "slide horizontal" })
+hl.animation({ leaf = "workspacesIn",  enabled = true, speed = 5, bezier = "easeOutQuint", style = "slide horizontal" })
+hl.animation({ leaf = "workspacesOut", enabled = true, speed = 5, bezier = "easeOutQuint", style = "slide horizontal" })
 hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "quick" })
 
--- Ref https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
--- "Smart gaps" / "No gaps when only"
--- uncomment all if you wish to use that.
--- hl.workspace_rule({ workspace = "w[tv1]", gaps_out = 0, gaps_in = 0 })
--- hl.workspace_rule({ workspace = "f[1]",   gaps_out = 0, gaps_in = 0 })
--- hl.window_rule({
---     name  = "no-gaps-wtv1",
---     match = { float = false, workspace = "w[tv1]" },
---     border_size = 0,
---     rounding    = 0,
--- })
--- hl.window_rule({
---     name  = "no-gaps-f1",
---     match = { float = false, workspace = "f[1]" },
---     border_size = 0,
---     rounding    = 0,
--- })
 
 -- See https://wiki.hypr.land/Configuring/Layouts/Dwindle-Layout/ for more
 hl.config({
@@ -261,6 +238,7 @@ hl.gesture({ fingers = 3, direction = "vertical", action = "workspace" })
 ---------------------
 
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
+local home = os.getenv("HOME")
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
@@ -292,7 +270,7 @@ hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
 
 --------------------------------
----- WORKSPACE KEYBINDINGS -----
+---- WORKspace KEYBINDINGS -----
 --------------------------------
 
 -- Switch Workspaces (AZERTY top row keys)
@@ -338,12 +316,12 @@ hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Laptop multimedia keys for volume and LCD brightness
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),      { locked = true, repeating = true })
-hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),     { locked = true, repeating = true })
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+ && ~/.config/hypr/scripts/osd_volume.sh"), { locked = true, repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && ~/.config/hypr/scripts/osd_volume.sh"),      { locked = true, repeating = true })
+hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && ~/.config/hypr/scripts/osd_volume.sh"),     { locked = true, repeating = true })
 hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),   { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessUp",  hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"),                  { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessDown",hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"),                  { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessUp",  hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+ && ~/.config/hypr/scripts/osd_brightness.sh"),                  { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessDown",hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%- && ~/.config/hypr/scripts/osd_brightness.sh"),                  { locked = true, repeating = true })
 
 -- Requires playerctl
 hl.bind("XF86AudioNext",  hl.dsp.exec_cmd("playerctl next"),       { locked = true })
@@ -354,8 +332,14 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 -- Lock screen shortcut
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock"))
 
--- Open Waypaper GUI wallpaper selector (SUPER + W)
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("waypaper"))
+-- Launch Walt in kitty (SUPER + W)
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("kitty --class=walt -e " .. home .. "/.local/bin/walt"))
+
+-- Apply one wallpaper at a time with a smooth fade transition (SUPER + SHIFT + W)
+hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/walt-random-one-by-one.sh"))
+
+-- Change wallpaper smoothly with Super + Space
+hl.bind("SUPER + space", hl.dsp.exec_cmd("bash " .. home .. "/.config/hypr/scripts/custom/quick-switch.sh"))
 
 -----------------------------------
 ---- SCREENSHOT KEYBINDINGS -------
@@ -372,7 +356,7 @@ hl.bind(mainMod .. " + SHIFT + Print", hl.dsp.exec_cmd([[sh -c 'grim -g "$(hyprc
 
 
 --------------------------------
----- WINDOWS AND WORKSPACES ----
+---- WINDOWS AND WORKspaceS ----
 --------------------------------
 
 -- Fix dragging issues with XWayland tooltips/popups
@@ -390,27 +374,16 @@ hl.window_rule({
     no_focus = true,
 })
 
--- Kitty terminal: open floating and centered.
--- Toggle back to tiled with SUPER + V.
+
+-- Walt: open floating and centered.
+-- Verify the actual class reported by hyprctl clients after first launch.
 hl.window_rule({
-    name  = "float-center-kitty",
-    match = { class = "^kitty$" },
+    name  = "float-center-walt",
+    match = { class = "^walt$" },
 
     float  = true,
     center = true,
-})
-
--- Waypaper: open floating and centered.
--- Toggle back to tiled with SUPER + V.
--- NOTE: verify this class name matches your actual waypaper window.
--- Run `hyprctl clients | grep -A3 -i waypaper` while it's open to confirm
--- (some GTK apps report a capitalized class, e.g. "Waypaper").
-hl.window_rule({
-    name  = "float-center-waypaper",
-    match = { class = "^waypaper$" },
-
-    float  = true,
-    center = true,
+    size   = "900 600",
 })
 
 -- Hyprland-run windowrule
@@ -433,10 +406,4 @@ hl.window_rule({
     size   = "45% 45%",
 })
 
--- Layer rules also return a handle.
--- local overlayLayerRule = hl.layer_rule({
---     name  = "no-anim-overlay",
---     match = { namespace = "^my-overlay$" },
---     no_anim = true,
--- })
--- overlayLayerRule:set_enabled(false)
+
