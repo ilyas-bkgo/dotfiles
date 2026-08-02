@@ -2,7 +2,12 @@
 
 A customized, clean setup featuring **Hyprland**, **Waybar**, **Waypaper**, and **Wofi**.
 
-![Desktop Screenshot](./screenshot.png)
+<div align="center">
+  <h1>❄️ Hyprland Configuration</h1>
+  <p>Minimal, dark Catppuccin-themed desktop layout.</p>
+
+  <img src="assets/preview.webp" alt="Hyprland Desktop Preview" width="100%" style="border-radius: 8px;" />
+</div>
 
 ## Included Configurations
 
