@@ -2,9 +2,7 @@
 
 Dark, tiling-WM setups for Linux — currently covering both **Hyprland** (Catppuccin-themed, Lua config) and **Sway** (Gruvbox-themed), plus shared Waybar config.
 
-<div align="center">
-  <img src="assets/gruv.mp4" alt="Hyprland Desktop Preview" width="100%" style="border-radius: 8px;" />
-</div>
+/home/urahara/dotfiles/assets/gruv.mp4
 
 ## Included
 
