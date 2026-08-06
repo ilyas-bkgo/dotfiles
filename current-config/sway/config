@@ -1,0 +1,190 @@
+include /etc/sway/config.d/*
+# ==============================================================================
+#  SWAY CONFIGURATION - CATPPUCCIN MOCHA / AZERTY (UPDATED)
+# ==============================================================================
+
+### Variables
+set $mod Mod4
+set $floating_modifier Mod4
+set $left h
+set $down j
+set $up k
+set $right l
+
+# Floating modifier configuration
+floating_modifier $floating_modifier normal
+
+# Preferred apps
+set $term kitty
+set $filemanager dolphin
+# Wofi launcher (pkill ensures previous instance closes cleanly on repeat press)
+set $menu pkill wofi || wofi --show drun
+set $lock swaylock -f --clock --image /home/urahara/Desktop/Wallpapers/main_wallpapers/jjk_gruv.jpg --indicator-radius 100 --indicator-thickness 4 --ring-color 689d6aaa --ring-ver-color 689d6a --ring-wrong-color cc241d --ring-clear-color d79921 --key-hl-color 98971a --bs-hl-color cc241d --line-color 00000000 --line-ver-color 00000000 --line-wrong-color 00000000 --line-clear-color 00000000 --inside-color 282828cc --inside-ver-color 282828cc --inside-wrong-color cc241dcc --inside-clear-color 3c3836cc --text-color ebdbb2 --text-ver-color ebdbb2 --text-wrong-color ebdbb2 --font "JetBrainsMono Nerd Font" --font-size 24 --indicator --indicator-idle-visible
+
+### Input Configuration (AZERTY French)
+input "type:keyboard" {
+    xkb_layout "fr"
+}
+
+input "type:touchpad" {
+    dwt enabled
+    tap enabled
+    natural_scroll enabled
+    middle_emulation enabled
+}
+
+### Output Configuration (Laptop Screen eDP-1)
+output eDP-1 {
+    mode 1920x1200@60.003Hz
+    position 0,0
+    scale 1.0
+}
+
+exec_always gsettings set org.gnome.desktop.interface gtk-theme 'Gruvbox-Dark'
+exec_always gsettings set org.gnome.desktop.interface icon-theme 'Adwaita'
+exec_always gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+
+# Autostart Wallpaper & Bar
+exec_always sh -c 'pkill swaybg; swaybg -i "$(find /home/urahara/Desktop/Wallpapers/main_wallpapers/ -type f | shuf -n 1)" -m fill'
+exec_always sh -c 'pkill waybar; waybar'
+
+# Idle & Lock (auto-lock at 5min, screen off at 10min, lock on lid close/sleep)
+exec swayidle -w \
+    timeout 300 '$lock' \
+    timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+    before-sleep '$lock' \
+    lock '$lock'
+
+bindsym $mod+Escape exec $lock
+
+### Look & Feel (No Title Bars + Minimal Gaps)
+# Disable title bars globally, keep a thin border only
+default_border pixel 2
+default_floating_border pixel 2
+for_window [app_id=".*"] border pixel 2
+for_window [class=".*"] border pixel 2
+
+gaps inner 4
+gaps outer 4
+smart_gaps off
+smart_borders off
+
+# Gruvbox Dark Palette
+set $bg_dark    #282828
+set $bg_alt     #3c3836
+set $fg         #ebdbb2
+set $red        #cc241d
+set $green      #98971a
+set $yellow     #d79921
+set $blue       #458588
+set $purple     #b16286
+set $aqua       #689d6a
+set $gray       #928374
+set $dark_gray  #504945
+
+# Window Colors
+# class                 border    backgr    text    indicator child_border
+client.focused          $aqua     $bg_dark  $fg     $gray     $aqua
+client.focused_inactive $bg_alt   $bg_dark  $fg     $gray     $bg_alt
+client.unfocused        $bg_alt   $bg_dark  $fg     $gray     $bg_alt
+client.urgent           $red      $bg_dark  $fg     $gray     $red
+
+### Key Bindings
+
+# Core Applications
+bindsym $mod+q exec $term         # Super + Q opens Kitty terminal
+bindsym $mod+c kill               # Super + C closes focused window
+bindsym $mod+e exec $filemanager  # Super + E opens Nautilus
+bindsym $mod+d exec $menu         # Super + D opens Wofi
+# Super + V to toggle floating and center
+bindsym $mod+v floating toggle; resize set 1200 800; move position center
+
+# Screenshot Keybindings (Grim + Slurp + Wl-clipboard)
+bindsym Print exec grim -g "$(slurp)" - | tee ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png | wl-copy
+bindsym Shift+Print exec grim - | tee ~/Pictures/Screenshots/$(date +'%Y-%m-%d_%H-%M-%S').png | wl-copy
+
+# Reload / Exit
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit Sway?' -B 'Yes' 'swaymsg exit'
+
+# Focus Movement
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# Move Focused Window
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# AZERTY Direct Workspace Switching (Robust Keycodes)
+bindcode $mod+10 workspace 1
+bindcode $mod+11 workspace 2
+bindcode $mod+12 workspace 3
+bindcode $mod+13 workspace 4
+bindcode $mod+14 workspace 5
+bindcode $mod+15 workspace 6
+bindcode $mod+16 workspace 7
+bindcode $mod+17 workspace 8
+bindcode $mod+18 workspace 9
+bindcode $mod+19 workspace 10
+
+# Move Container to Workspace
+bindcode $mod+Shift+10 move container to workspace 1
+bindcode $mod+Shift+11 move container to workspace 2
+bindcode $mod+Shift+12 move container to workspace 3
+bindcode $mod+Shift+13 move container to workspace 4
+bindcode $mod+Shift+14 move container to workspace 5
+bindcode $mod+Shift+15 move container to workspace 6
+bindcode $mod+Shift+16 move container to workspace 7
+bindcode $mod+Shift+17 move container to workspace 8
+bindcode $mod+Shift+18 move container to workspace 9
+bindcode $mod+Shift+19 move container to workspace 10
+
+
+# Layout Controls
+bindsym $mod+b splith
+bindsym $mod+Shift+v splitv
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+t layout toggle split
+bindsym $mod+f fullscreen
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+
+# Scratchpad
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+minus scratchpad show
+
+# Resizing Mode
+mode "resize" {
+    bindsym $left resize shrink width 10px
+    bindsym $down resize grow height 10px
+    bindsym $up resize shrink height 10px
+    bindsym $right resize grow width 10px
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+# Audio & Brightness Controls
+bindsym --locked XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+bindsym --locked XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+bindsym --locked XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%-
+bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
+
+# Change wallpaper on demand (Super + Shift + W)
+bindsym $mod+Shift+w exec sh -c 'pkill swaybg; swaybg -i "$(find /home/urahara/Desktop/Wallpapers/main_wallpapers/ -type f | shuf -n 1)" -m fill'

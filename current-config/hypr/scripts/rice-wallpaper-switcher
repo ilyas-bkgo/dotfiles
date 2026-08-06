@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# rice-wallpaper-switcher
+# Requires: swww
+
+WALLPAPER_DIR="$HOME/Pictures/Wallpapers"
+# You can customize these transitions: wipe, outer, wave, grow, center, any
+TRANSITION="wave"
+DURATION=2
+
+if [ ! -d "$WALLPAPER_DIR" ]; then
+    echo "Wallpaper directory not found: $WALLPAPER_DIR"
+    exit 1
+fi
+
+# Pick a random wallpaper
+WALLPAPER=$(find "$WALLPAPER_DIR" -type f \( -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" -o -name "*.webp" \) | shuf -n 1)
+
+if [ -f "$WALLPAPER" ]; then
+    swww img "$WALLPAPER" --transition-type "$TRANSITION" --transition-duration "$DURATION"
+else
+    echo "No valid wallpapers found in $WALLPAPER_DIR"
+fi

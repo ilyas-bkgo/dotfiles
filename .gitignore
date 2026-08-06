@@ -3,22 +3,15 @@
 
 !.gitignore
 !README.md
-!link.sh
+!screenshot.png
 
-!hypr/
-!hypr/hyprland.conf
-!hypr/scripts/
-!hypr/scripts/theme-switcher
+!assets/
+!assets/preview.webp
 
-!wofi/
-!wofi/style.css
-!wofi/themes/
-!wofi/themes/dark.css
-!wofi/themes/light.css
-
-!waybar/
-!waybar/config.jsonc
-!waybar/style.css
-!waybar/themes/
-!waybar/themes/dark.css
-!waybar/themes/light.css
+!current-config/
+!current-config/hypr/
+!current-config/hypr/**
+!current-config/sway/
+!current-config/sway/**
+!current-config/waybar/
+!current-config/waybar/**

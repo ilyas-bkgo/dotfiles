@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# rice-showcase
+# Launches a 4-pane tiled terminal grid using Kitty
+
+kitty --title "Rice Showcase" --session <(
+cat <<EOF
+new_tab rice
+layout grid
+launch --title fastfetch fastfetch
+launch --title btop btop
+launch --title cava cava
+launch --title yazi yazi
+EOF
+)
