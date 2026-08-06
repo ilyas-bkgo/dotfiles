@@ -46,6 +46,9 @@ link_dir  "$src_dir/hypr/scripts"        "$config_dir/hypr/scripts"
 
 find "$config_dir/hypr/scripts" -type f -name '*.sh' -exec chmod +x {} \;
 
+# sway
+link_file "$src_dir/sway/config" "$config_dir/sway/config"
+
 # waybar
 link_file "$src_dir/waybar/config.jsonc"         "$config_dir/waybar/config.jsonc"
 link_file "$src_dir/waybar/style.css"            "$config_dir/waybar/style.css"
