@@ -48,8 +48,8 @@ local menu = "wofi --show drun"
 -- Autostart necessary processes (like notifications daemons, status bars, etc.)
 -- Or execute your favorite apps at launch like this:
 --
--- Use hyprpaper as the wallpaper backend and leave the old waypaper/swww
--- startup in place as comments so it can be restored if needed.
+-- Hyprpaper is the only wallpaper backend. Walt controls it through Hyprland's
+-- hyprpaper IPC, so do not start another wallpaper daemon here.
 
 local function start_in_background(command)
     os.execute("nohup " .. command .. " >/dev/null 2>&1 &")
@@ -58,8 +58,7 @@ end
 hl.on("hyprland.start", function ()
     start_in_background("notify-send 'Hyprland' 'Startup hook executed'")
 
-    -- start_in_background("hyprpaper")
-    start_in_background("swww-daemon")
+    start_in_background("hyprpaper")
     start_in_background("nm-applet")
     start_in_background("mako")
 
@@ -69,8 +68,6 @@ hl.on("hyprland.start", function ()
     start_in_background("sh -c 'sleep 1 && /usr/libexec/xdg-desktop-portal'")
 
     start_in_background("waybar")
-    -- start_in_background("swww-daemon")
-    -- start_in_background("sh -c 'sleep 1 && waypaper --restore'")
 end)
 -------------------------------
 ---- ENVIRONMENT VARIABLES ----
@@ -332,14 +329,16 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 -- Lock screen shortcut
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock"))
 
--- Launch Walt in kitty (SUPER + W)
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("kitty --class=walt -e " .. home .. "/.local/bin/walt"))
+-- Launch Walt's TUI (SUPER + W).  This is the keyboard-driven picker with
+-- inline previews; Kitty supplies the image protocol it uses for previews.
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("kitty --class=walt --title=Walt --override initial_window_width=140c --override initial_window_height=42c -e " .. home .. "/.local/bin/walt"))
 
 -- Apply one wallpaper at a time with a smooth fade transition (SUPER + SHIFT + W)
 hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/walt-random-one-by-one.sh"))
 
--- Change wallpaper smoothly with Super + Space
-hl.bind("SUPER + space", hl.dsp.exec_cmd("bash " .. home .. "/.config/hypr/scripts/custom/quick-switch.sh"))
+-- Change wallpaper smoothly with Super + Space.  Keep the key name in the
+-- canonical form used by the rest of this config.
+hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd("bash " .. home .. "/.config/hypr/scripts/custom/quick-switch.sh"))
 
 -----------------------------------
 ---- SCREENSHOT KEYBINDINGS -------
@@ -375,15 +374,14 @@ hl.window_rule({
 })
 
 
--- Walt: open floating and centered.
--- Verify the actual class reported by hyprctl clients after first launch.
+-- Walt's TUI needs a generous terminal area for its wallpaper preview.
 hl.window_rule({
     name  = "float-center-walt",
     match = { class = "^walt$" },
 
     float  = true,
     center = true,
-    size   = "900 600",
+    size = "45% 40%",
 })
 
 -- Hyprland-run windowrule
@@ -405,5 +403,3 @@ hl.window_rule({
     center = true,
     size   = "45% 45%",
 })
-
-

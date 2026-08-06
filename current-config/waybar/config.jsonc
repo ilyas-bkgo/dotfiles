@@ -5,36 +5,44 @@
   "mod": "dock",
   "height": 26,
   "margin-top": 0,
-  "margin-left": 150,
-  "margin-right": 150,
+  "margin-left": 0,
+  "margin-right": 0,
   "margin-bottom": 0,
   "modules-left": [
     "custom/omarchy",
     "clock",
-    "custom/idle-indicator",
-    "custom/notification-silencing-indicator",
-    "custom/voxtype",
-    "custom/weather",
-    "custom/update",
-    "custom/screenrecording-indicator",
-    "hyprland/workspaces",
+    "sway/workspaces",
     "mpris"
-  ],
+  ], 
   "modules-center": [
-    "hyprland/window"
-  ],
+    "sway/window"
+  ],  
   "modules-right": [
-    "group/tray-expander",
-    "custom/updatespacman",
-    "idle_inhibitor",
-    "backlight",
-    "bluetooth",
+    "custom/separator",
     "network",
-    "pulseaudio",
-    "cpu",
-    "battery"
+    "battery",
+    "custom/separator",
+    "group/tray-expander",
+    "custom/separator",
+    "custom/power"
   ],
-  "hyprland/workspaces": {
+  "custom/separator": {
+    "format": "│",
+    "tooltip": false
+  },
+  "temperature": {
+    "hwmon-path": "/sys/class/hwmon/hwmon0/temp1_input",
+    "critical-threshold": 80,
+    "format-critical": "{icon} {temperatureC}°C",
+    "format": "{icon} {temperatureC}°C",
+    "format-icons": ["", "", ""]
+  },
+  "custom/power": {
+    "format": "⏻",
+    "on-click": "wlogout -p layer-shell",
+    "tooltip": false
+  },
+  "sway/workspaces": {
     "on-click": "activate",
     "format": "{icon}",
     "format-icons": {
@@ -58,29 +66,9 @@
       "5": []
     }
   },
-  "hyprland/window": {
-    "format": "{title} - {class}",
-    "max-length": 35,
-    "rewrite": {
-      " - ": "",
-      "(.*?) - Chromium - chromium": "  $1 ",
-      "(.*chrome)...(.*)": "  $1 ",
-      "(.*) - Obsidian - .* - obsidian": "  $1 ",
-      "(.*nvim)...(.*)": "  $2 ",
-      "(.*code) - (.*)": " 󰨞 $1 ",
-      "^.*btop( .*|$)": " 󰧨 BTOP $1 ",
-      "^.*cmatrix( .*|$)": " 󰘨 MATRIX $1 ",
-      "(.*) - Spotify": "  $1 ",
-      "(.*) - com.mitchellh.ghostty": " 󰊠 $1 ",
-      "(.*) - Alacritty": "   $1 ",
-      "(.*) - BeeperTexts": " 󰻞  $1 ",
-      "(.*Discord)...(.*).. (.*)": "  $2 ",
-      "(.*) - org.gnome.Nautilus": " 󰣆 $1 ",
-      "(.*) - fish": "  [$1] ",
-      "(.*Steam)...(.*)": " $1",
-      "(.*imv)...(.*).. (.*)": " $2",
-      "(.*) - com.obsproject.Studio": "  $1 "
-    }
+  "sway/window": {
+    "format": "{title}",
+    "max-length": 35
   },
   "custom/weather": {
     "format": "{}°",
@@ -121,7 +109,7 @@
     "format": " {usage}%"
   },
   "clock": {
-    "format": "{:%H:%M %a}",
+    "format": "{:%I:%M %p}",
     "format-alt": "{:L%d %B W%V %Y}",
     "tooltip-format": "<span>{calendar}</span>",
     "calendar": {
@@ -130,9 +118,9 @@
       "mode-mon-col": 3,
       "on-click-right": "mode",
       "format": {
-        "month": "<span color='#ffead3'><b>{}</b></span>",
-        "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
-        "today": "<span color='#ff6699'><b>{}</b></span>"
+        "month": "<span color='#fabd2f'><b>{}</b></span>",
+        "weekdays": "<span color='#fe8019'><b>{}</b></span>",
+        "today": "<span color='#fb4934'><b>{}</b></span>"
       }
     }
   },
@@ -224,6 +212,9 @@
   },
   "mpris": {
     "format": "󰋎",
+    "on-click": "playerctl play-pause",
+    "on-scroll-up": "playerctl next",
+    "on-scroll-down": "playerctl previous",
     "format-paused": "<span color='grey'>{status_icon}</span>",
     "max-length": 20,
     "player-icons": {
@@ -243,7 +234,15 @@
     },
     "modules": [
       "custom/expand-icon",
-      "tray"
+      "tray",
+      "idle_inhibitor",
+      "backlight",
+      "temperature",
+      "battery",
+      "bluetooth",
+      "network",
+      "pulseaudio",
+      "cpu"
     ]
   },
   "custom/expand-icon": {

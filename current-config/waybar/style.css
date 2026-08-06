@@ -1,190 +1,225 @@
-/* Define fallbacks for theme colors directly in CSS */
-@define-color background #1e1e2e;
-@define-color foreground #cdd6f4;
-@define-color accent     #89b4fa;
-@define-color active_bg  #313244;
+/* Gruvbox-inspired palette */
+@define-color bg_dim     #1d2021;
+@define-color bg_box     #3c3836;
+@define-color fg         #ebdbb2;
+@define-color fg_muted   #a89984;
+@define-color red        #fb4934;
+@define-color orange     #fe8019;
+@define-color yellow     #fabd2f;
+@define-color green      #b8bb26;
+@define-color aqua       #83a598;
+@define-color pink       #d3869b;
 
 * {
-  color: @foreground;
-  border: none;
-  border-radius: 0 0 8px 8px;
-  font-family: 'CaskaydiaMono Nerd Font Propo', 'JetBrainsMono Nerd Font', sans-serif;
-  min-height: 0px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+    color: @fg;
+    font-family: "CaskaydiaMono Nerd Font Propo",
+                 "JetBrainsMono Nerd Font",
+                 sans-serif;
 }
 
 window#waybar {
-  background-color: transparent;
+    background: transparent;
 }
+
 #waybar > box {
-  border-radius: 0 0 8px 8px; /* flat top, rounded bottom */
-  margin: 0px 150px 0px 150px; /* increase side margins to shorten bar */
-  background-color: rgba(30, 30, 46, 0.9);
-  box-shadow: 1px 1px 4px 1px rgba(0, 0, 0, 0.4);
-  transition-property: background-color;
-  transition-duration: .5s;
-  min-height: 18px;
-  padding: 0 4px;
+    background: @bg_dim;
+    padding: 0 8px;
+    margin: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,.4);
 }
+
 .modules-left,
 .modules-center,
 .modules-right {
-  font-size: 12px;
+    font-size: 12px;
 }
 
-/* Workspace styling */
+/* ==========================================
+   LEFT
+   ========================================== */
+
+#custom-omarchy {
+    color: @aqua;
+    font-size: 14px;
+    margin-left: 4px;
+    margin-right: 12px;
+}
+
+#clock {
+    background: @bg_box;
+    color: @fg;
+    font-weight: bold;
+    padding: 1px 8px;
+    margin: 1px 8px 1px 0;
+    border-radius: 3px;
+}
+
+/* ==========================================
+   WORKSPACES
+   ========================================== */
+
 #workspaces {
-  padding: 0;
-  margin: 0;
+    margin: 0 6px;
+    padding: 0;
 }
 
 #workspaces button {
-  all: initial;
-  font-size: 13px;
-  color: @foreground;
-  min-width: 0px;
-  padding: 0px 3px;
-  margin: 0px 1px;
-  opacity: 0.85;
-  border-radius: 0; /* keep buttons flush to look contiguous */
-  transition: background-color 120ms ease, box-shadow 120ms ease, color 120ms ease;
+    all: initial;
+    color: #7c6f64;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 1px 7px;
+    margin: 0 1px;
+    min-width: 0;
+    transition: all 120ms ease;
 }
 
 #workspaces button:hover {
-  background-color: rgba(205,214,244,0.03);
+    color: @fg;
+    background: rgba(235,219,178,.08);
 }
 
-#workspaces button.active {
-  color: @accent;
-  background-color: @active_bg;
-  opacity: 1.0;
-  font-weight: 700;
-  box-shadow: inset 0 -6px 18px rgba(137,180,250,0.06); /* subtle lit effect */
+#workspaces button.active,
+#workspaces button.focused {
+    color: @pink;
+    background: @bg_box;
+    border-bottom: 2px solid @pink;
+    border-radius: 2px 2px 0 0;
+}
+
+#workspaces button.urgent {
+    color: @red;
+    background: @bg_box;
 }
 
 #workspaces button.empty {
-  opacity: 0.45;
+    color: #504945;
 }
 
-#workspaces button.empty.active {
-  color: @accent;
-  opacity: 1;
+#workspaces button.empty.active,
+#workspaces button.empty.focused {
+    color: @pink;
 }
 
-/* Module Sizing & Spacing */
-#mpris,
-#tray,
+/* ==========================================
+   RIGHT MODULE SPACING
+   ========================================== */
+
 #cpu,
+#memory,
+#temperature,
+#disk,
+#backlight,
 #battery,
 #network,
 #bluetooth,
 #pulseaudio,
 #idle_inhibitor,
-#backlight,
-#clock,
-#group-tray-expander,
+#mpris,
+#tray,
+#language,
+#keyboard-state,
+#custom-notification,
+#custom-idle-indicator,
+#custom-notification-silencing-indicator,
 #custom-screenrecording-indicator,
-#custom-idle-indicator,
-#custom-expand-icon,
-#custom-omarchy,
-#custom-weather,
-#custom-updatespacman,
-#custom-update {
-  min-width: 12px;
-  font-size: 13px;
-  margin: 0 3px;
-  padding: 0 2px;
+#custom-voxtype,
+#custom-power,
+#custom-separator {
+    padding: 0 4px;
+    margin: 0 1px;
+    transition: all 150ms ease;
 }
 
-#custom-omarchy {
-  padding-top: 0px;
-  font-size: 14px;
-  color: @accent;
+#cpu:hover,
+#memory:hover,
+#temperature:hover,
+#disk:hover,
+#backlight:hover,
+#battery:hover,
+#network:hover,
+#bluetooth:hover,
+#pulseaudio:hover,
+#idle_inhibitor:hover,
+#mpris:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
 }
 
-#custom-expand-icon {
-  margin-right: 4px;
+/* ==========================================
+   COLORS
+   ========================================== */
+
+#cpu {
+    color: @pink;
 }
 
-#custom-update {
-  padding-left: 0px;
-  padding-right: 4px;
+#memory {
+    color: @yellow;
 }
 
-.hidden {
-  opacity: 0;
+#temperature {
+    color: @orange;
 }
 
-#custom-voxtype {
-  min-width: 12px;
-  margin: 0 0 0 2.5px;
+#backlight {
+    color: @orange;
 }
 
-#custom-voxtype.recording {
-  color: #f38ba8;
+#battery {
+    color: @green;
 }
 
-#custom-idle-indicator,
-#custom-notification-silencing-indicator {
-  min-width: 12px;
-  margin-left: 3px;
-  margin-right: 3px;
-  font-size: 14px;
-  padding-bottom: 0px;
+#network,
+#bluetooth {
+    color: @aqua;
 }
 
-#custom-idle-indicator.active,
-#custom-notification-silencing-indicator.active {
-  color: #f38ba8;
+#pulseaudio {
+    color: @pink;
 }
 
-#custom-screenrecording-indicator {
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-  color: transparent;
-  padding-left: 0px;
-  padding-right: 3px;
-}
-
-#custom-screenrecording-indicator.active {
-  color: #f38ba8;
-  animation-name: blink-recording;
-  animation-duration: 0.5s;
-}
-
-@keyframes blink-recording {
-  to {
-    color: @background;
-  }
-}
-
-/* Tooltips */
-tooltip {
-  padding: 6px 10px;
-  background: @background;
-  border: 1px solid rgba(205, 214, 244, 0.2);
-  border-radius: 8px;
-  box-shadow: 1px 1px 3px 1px #101010;
-  font-size: 13px;
-}
-
-tooltip label {
-  color: @foreground;
-}
-
-/* MPRIS Music Module */
-#mpris {
-  padding-top: 2px;
-  margin-left: 8px;
-  color: @foreground;
+#custom-power {
+    color: @red;
 }
 
 #idle_inhibitor {
-  padding-left: 0px;
-  margin-left: 0px;
-  color: @foreground;
+    color: @red;
 }
 
-#idle_inhibitor.activated {
-  color: #a6e3a1;
+#mpris {
+    color: @fg_muted;
+}
+
+#custom-separator {
+    color: #504945;
+}
+
+/* ==========================================
+   TOOLTIPS
+   ========================================== */
+
+tooltip {
+    background: @bg_dim;
+    border: 1px solid @bg_box;
+    border-radius: 6px;
+    padding: 6px 10px;
+}
+
+tooltip label {
+    color: @fg;
+}
+
+/* ==========================================
+   ACTIVE INDICATORS
+   ========================================== */
+
+#custom-idle-indicator.active,
+#custom-notification-silencing-indicator.active,
+#custom-screenrecording-indicator.active,
+#custom-voxtype.recording {
+    color: @red;
 }
