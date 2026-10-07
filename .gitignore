@@ -15,3 +15,6 @@
 !current-config/sway/**
 !current-config/waybar/
 !current-config/waybar/**
+!current-config/everforest/
+!current-config/everforest/**
+!install-everforest.sh

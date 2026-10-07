@@ -1,0 +1,56 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 30,
+    "margin": "6 8 0 8",
+    "spacing": 8,
+    "modules-left": ["hyprland/workspaces", "hyprland/window"],
+    "modules-center": ["clock"],
+    "modules-right": ["cpu", "memory", "temperature", "network", "wireplumber", "battery", "tray"],
+    "hyprland/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": true,
+        "persistent-workspaces": { "*": 5 },
+        "format": "{icon}",
+        "on-click": "activate",
+        "format-icons": { "default": "●" }
+    },
+    "hyprland/window": {
+        "format": "{}",
+        "max-length": 50,
+        "rewrite": { "": "Desktop" }
+    },
+    "clock": {
+        "format": "{:%a %d %b  |  %H:%M}",
+        "tooltip-format": "<big>{:%A, %d %B %Y}</big>",
+        "interval": 1
+    },
+    "cpu": { "interval": 5, "format": "CPU {usage}%", "tooltip": false },
+    "memory": { "interval": 5, "format": "RAM {percentage}%", "tooltip": false },
+    "temperature": {
+        "interval": 5,
+        "format": "{temperatureC}°C",
+        "critical-threshold": 80,
+        "format-critical": "{temperatureC}°C!",
+        "tooltip": false
+    },
+    "network": {
+        "format-wifi": "󰤨 {essid}",
+        "format-ethernet": "󰈀 Connected",
+        "format-disconnected": "󰤭 Offline",
+        "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "wireplumber": {
+        "format": "VOL {volume}%",
+        "format-muted": "Muted",
+        "scroll-step": 5
+    },
+    "battery": {
+        "states": { "warning": 30, "critical": 15 },
+        "format": "{capacity}%",
+        "format-charging": "󰂄 {capacity}%",
+        "format-plugged": "󰚥 {capacity}%",
+        "format-full": "󰁹 100%"
+    },
+    "tray": { "icon-size": 16, "spacing": 8 }
+}

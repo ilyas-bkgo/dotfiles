@@ -1,0 +1,99 @@
+* {
+    font-family: "Noto Sans", sans-serif;
+    font-size: 12px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+
+window#waybar {
+    background: rgba(43, 51, 57, 0.92);
+    color: #d8caac;
+    border: 1px solid rgba(167, 192, 128, 0.28);
+    border-radius: 8px;
+}
+
+button { border: none; box-shadow: none; }
+
+#custom-fedora {
+    margin: 1px 4px 1px 8px;
+    padding: 0 5px;
+    color: #a7c080;
+    font-size: 17px;
+}
+
+#window {
+    margin: 1px 4px;
+    padding: 0 8px;
+    color: #d8caac;
+}
+
+#workspaces {
+    margin: 1px 6px;
+    padding: 0 4px;
+    border-radius: 6px;
+    background: rgba(43, 51, 57, 0.75);
+}
+
+#workspaces button {
+    min-width: 12px;
+    padding: 0 4px;
+    margin: 1px 2px;
+    border-radius: 5px;
+    color: #a9b39d;
+    background: transparent;
+}
+
+#workspaces button:hover { color: #d8caac; background: #3c474d; }
+#workspaces button.active { color: #a7c080; background: rgba(167, 192, 128, 0.14); }
+#workspaces button.urgent { color: #e68183; }
+
+#custom-platform-profile,
+#temperature,
+#clock,
+#wireplumber,
+#battery,
+#language,
+#idle_inhibitor,
+#network,
+#custom-bluetooth,
+#tray {
+    margin: 1px 2px;
+    padding: 0 6px;
+    color: #d8caac;
+    background: transparent;
+}
+
+#custom-platform-profile { color: #a7c080; padding-left: 10px; }
+#temperature { color: #d9bb80; }
+#clock { color: #a7c080; font-weight: bold; padding: 0 12px; }
+#wireplumber { color: #a7c080; }
+#battery.warning:not(.charging) { color: #d9bb80; }
+#battery.critical:not(.charging) { color: #e68183; }
+#language { color: #d8caac; }
+#idle_inhibitor { color: #83c092; }
+#network.disconnected { color: #e68183; }
+#custom-bluetooth { color: #83c092; }
+
+#group-system {
+    margin: 1px 2px;
+    padding: 0 4px;
+    border-radius: 6px;
+    background: transparent;
+}
+
+#custom-system {
+    color: #d9bb80;
+    font-size: 16px;
+    padding: 0 4px;
+}
+
+#cpu,
+#memory {
+    color: #d9bb80;
+    padding: 0 4px;
+}
+
+.system-drawer {
+    padding: 0 4px;
+}
